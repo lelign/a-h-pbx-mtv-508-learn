@@ -23,7 +23,7 @@ find_package(Qt5WebSockets)
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt5SerialPort)
 find_package(Threads)
-FIND_PACKAGE(libusb-1.0 REQUIRED)
+#FIND_PACKAGE(libusb-1.0 REQUIRED)
 find_package(bitstream REQUIRED)
 find_package(Zvbi REQUIRED)
 
@@ -33,7 +33,7 @@ include_directories(${Qt5Svg_INCLUDE_DIRS})
 include_directories(${Qt5Core_INCLUDE_DIRS})
 include_directories(${Qt5Network_INCLUDE_DIRS})
 include_directories(${Qt5WebSockets_INCLUDE_DIRS})
-include_directories(${LIBUSB_1_INCLUDE_DIRS})
+#include_directories(${LIBUSB_1_INCLUDE_DIRS})
 include_directories(${LIBBITSTREAM_INCLUDE_DIR})
 include_directories(${ZVBI_INCLUDE_DIRS})
 include_directories(tsl)
@@ -90,7 +90,8 @@ add_executable(pbx-mtv-508
         vgpi_api/vgpi_api.cpp
         remote_ctrl_preset/remote_ctrl_preset.cpp
 )
-target_link_libraries(pbx-mtv-508 Qt5::Widgets Qt5::Core Qt5::WebSockets Qt5::Svg Qt5::SerialPort ${LIBUSB_1_LIBRARIES} ${ZVBI_LIBRARY} tsl-server)
+#target_link_libraries(pbx-mtv-508 Qt5::Widgets Qt5::Core Qt5::WebSockets Qt5::Svg Qt5::SerialPort ${LIBUSB_1_LIBRARIES} ${ZVBI_LIBRARY} tsl-server)
+target_link_libraries(pbx-mtv-508 Qt5::Widgets Qt5::Core Qt5::WebSockets Qt5::Svg Qt5::SerialPort ${ZVBI_LIBRARY} tsl-server)
 
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/pbx-mtv-508 DESTINATION bin)
 
