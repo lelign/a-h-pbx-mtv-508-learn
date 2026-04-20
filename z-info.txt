@@ -1,0 +1,10 @@
+#source
+. /opt/poky/2.4.4/environment-setup-armv7ahf-neon-poky-linux-gnueabi
+
+# compile
+cd /media/ignat/537GB/anton_help/pbx-mtv-508-software-build
+<
+cmake -DCMAKE_BUILD_TYPE=Debug ../Project_508_learn
+>
+cmake ../Project_508_learn
+make -j $(nproc)

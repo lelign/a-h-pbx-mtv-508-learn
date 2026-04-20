@@ -57,7 +57,7 @@ add_executable(pbx-mtv-508
         cascade_server/cascade_server.cpp
         cascade_ctrl/cascade_ctrl.cpp
         m26/mb86m26.cpp
-        m26/mb86m26_control.cpp
+#        m26/mb86m26_control.cpp
 #        m26/mb86m26_lib.cpp
 #        m26/mpeg-dump.cpp
 #        HlsServer/hlsserver.cpp

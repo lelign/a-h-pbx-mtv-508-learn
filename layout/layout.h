@@ -15,7 +15,7 @@
 #include <QJsonDocument>
 
 #include "../mtv-system/mtv-system.h"
-#include "../m26/mb86m26_control.h"
+//#include "../m26/mb86m26_control.h"
 #include "../led/led_class.h"
 #include "../qpps/qpps.h"
 #include "../gpio/gpio.h"
@@ -30,7 +30,8 @@ class Layout : public QObject
 {
     Q_OBJECT
 public:
-    explicit Layout(PbxMtvSystem *mtvsystem,  mb86m26_control *m26_control, Gpio *gpio, Eventlog *eventlog);
+    //explicit Layout(PbxMtvSystem *mtvsystem,  mb86m26_control *m26_control, Gpio *gpio, Eventlog *eventlog);
+    explicit Layout(PbxMtvSystem *mtvsystem,  Gpio *gpio, Eventlog *eventlog);
     ~Layout();
 
     typedef struct {
@@ -253,7 +254,7 @@ private:
     QTimer timer_update_op47;
 
     PbxMtvSystem    *mtvsystem;
-    mb86m26_control *m26_control;
+    //mb86m26_control *m26_control;
     Led_class       *led;
     QPps            *qpps;
     Gpio            *gpio;

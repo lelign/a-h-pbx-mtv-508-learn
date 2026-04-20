@@ -11,7 +11,7 @@
 
 static QLoggingCategory category("M26");
 
-static libusb_hotplug_callback_handle libusb_handle;
+//static libusb_hotplug_callback_handle libusb_handle;
 
 int mb_hotplug_callback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, void *user_data)
 {
@@ -317,9 +317,9 @@ void MB86M26::mb_start_interrupt(libusb_device_handle * dev_handle)
 void MB86M26::mb_hotplug_handle()
 {
         buffer_index = 0;
-        allocate_usb();
-        mb_start_interrupt(mb_devh);
-        mb_start_bulk(mb_devh);
+        //allocate_usb();
+        //mb_start_interrupt(mb_devh);
+        //mb_start_bulk(mb_devh);
 }
 
 void MB86M26::callback(libusb_context *ctx, libusb_device *device, libusb_hotplug_event event, int type)

@@ -38,10 +38,11 @@ PbxMtv508::PbxMtv508(bool watchdog)
     eventlog = new Eventlog;
     eventlog->add(Eventlog::SYSTEM, "--- Start the program ---");
 
-    m26_control = new mb86m26_control(this, QString(M26_GPIO));
+    //m26_control = new mb86m26_control(this, QString(M26_GPIO));
     //hlsserver = new HlsServer("/var/volatile/hls/");
 
-    layout = new Layout(mtvsystem, m26_control, gpio, eventlog);
+    //layout = new Layout(mtvsystem, m26_control, gpio, eventlog);
+    layout = new Layout(mtvsystem, gpio, eventlog);
 
     hardware_diagnostics = new Hardware_diagnostics;
     connect(hardware_diagnostics, &Hardware_diagnostics::signal_over_temperature,

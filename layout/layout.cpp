@@ -31,8 +31,10 @@ static QLoggingCategory category("Layout Class");
 #define TALLY_RED_OFF_COLOR QColor(0x00, 0x00, 0x00)
 #define TALLY_GREEN_OFF_COLOR QColor(0x00, 0x00, 0x00)
 
-Layout::Layout(PbxMtvSystem *mtvsystem,  mb86m26_control *m26_control, Gpio *gpio, Eventlog *eventlog) :
-    mtvsystem(mtvsystem), m26_control(m26_control), gpio(gpio), eventlog(eventlog)
+//Layout::Layout(PbxMtvSystem *mtvsystem,  mb86m26_control *m26_control, Gpio *gpio, Eventlog *eventlog) :
+//    mtvsystem(mtvsystem), m26_control(m26_control), gpio(gpio), eventlog(eventlog)
+Layout::Layout(PbxMtvSystem *mtvsystem,  Gpio *gpio, Eventlog *eventlog) :
+    mtvsystem(mtvsystem), gpio(gpio), eventlog(eventlog)
 {
     qCDebug(category) << "creating...";
 
@@ -583,13 +585,13 @@ static int output_format_old = -1;
     if(output_format_old != output_format){
 
         if(output_format == OUT_STD_1080i50){
-            m26_control->set_v_format(mb86m26_control::PULLDOWN);
-            m26_control->set_std(STD_1080i50);
+            //m26_control->set_v_format(mb86m26_control::PULLDOWN);
+            //m26_control->set_std(STD_1080i50);
             mtvsystem->set_dei(0);
         }
         else{
-            m26_control->set_v_format(mb86m26_control::NATIVE);
-            m26_control->set_std(STD_1080p25);
+            //m26_control->set_v_format(mb86m26_control::NATIVE);
+            //m26_control->set_std(STD_1080p25);
             mtvsystem->set_dei(1);
         }
 

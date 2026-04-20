@@ -10,7 +10,7 @@
 #include "layout/layout.h"
 #include "mtv-web/mtv_web.h"
 #include "hardware_diagnostics/hardware_diagnostics.h"
-#include "m26/mb86m26_control.h"
+//#include "m26/mb86m26_control.h"
 //#include "HlsServer/hlsserver.h"
 #include "factory_defaults/factory_defaults.h"
 #include "watchdog.h"
@@ -51,7 +51,7 @@ private:
     Layout          *layout;
     Mtv_web         *mtv_web;
     Hardware_diagnostics *hardware_diagnostics;
-    mb86m26_control *m26_control;
+    //mb86m26_control *m26_control;
     Factory_defaults *factory_defaults;
     Watchdog        *watchdog;
     Gpio            *gpio;
