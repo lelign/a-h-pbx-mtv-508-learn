@@ -50,6 +50,7 @@ PbxMtv508::PbxMtv508(bool watchdog)
     mtv_web   = new Mtv_web(mtvsystem, hardware_diagnostics, layout);
     connect(mtv_web, &Mtv_web::signal_reconfigure, this, &PbxMtv508::slot_web_reconfigure);
 
+    /*
     m26_control->set_std(STD_1080p25);
     m26_control->set_output_std(mb86m26_control::STD_OUT_1080);
     m26_control->set_aux_audio_enable(0);
@@ -63,6 +64,7 @@ PbxMtv508::PbxMtv508(bool watchdog)
     m26_control->set_gop_size(30);
     m26_control->set_gop(mb86m26_control::IBBP);
     m26_control->set_gop_mode(mb86m26_control::GOP_CLOSED);
+    */
     mtvsystem->set_dei(1);
 
     #if (BOARD_REV==0)
@@ -140,7 +142,7 @@ PbxMtv508::~PbxMtv508()
 {
     delete watchdog;
     delete hdmi_adv7513;
-    delete m26_control;
+//    delete m26_control;
     delete hlsserver;
     delete layout;
     delete mtvsystem;
