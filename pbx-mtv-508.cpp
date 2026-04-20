@@ -8,6 +8,7 @@ extern "C" {
 #include "profitt-security/profitt-security.h"
 }
 
+/*
 void data_ready(uint8_t * data, int len, void * ctx)
 {
     PbxMtv508 * ptr = (PbxMtv508*) ctx;
@@ -15,6 +16,7 @@ void data_ready(uint8_t * data, int len, void * ctx)
         ptr->hlsserver->add_packet((char*) data+(188+4)*i+4, 188);
     free(data);
 }
+*/
 
 PbxMtv508::PbxMtv508(bool watchdog)
 {
@@ -37,7 +39,7 @@ PbxMtv508::PbxMtv508(bool watchdog)
     eventlog->add(Eventlog::SYSTEM, "--- Start the program ---");
 
     m26_control = new mb86m26_control(this, QString(M26_GPIO));
-    hlsserver = new HlsServer("/var/volatile/hls/");
+    //hlsserver = new HlsServer("/var/volatile/hls/");
 
     layout = new Layout(mtvsystem, m26_control, gpio, eventlog);
 
@@ -143,7 +145,7 @@ PbxMtv508::~PbxMtv508()
     delete watchdog;
     delete hdmi_adv7513;
 //    delete m26_control;
-    delete hlsserver;
+//    delete hlsserver;
     delete layout;
     delete mtvsystem;
     delete mtv_web;
@@ -164,8 +166,8 @@ void PbxMtv508::slot_reset_to_factory_settings()
         QThread::msleep(400);
     };
 
-    hlsserver->delete_files_from_folder("/etc/network/", "interfaces");
-    hlsserver->delete_files_from_folder("/etc/xdg/", "*.conf");
+    //hlsserver->delete_files_from_folder("/etc/network/", "interfaces");
+    //hlsserver->delete_files_from_folder("/etc/xdg/", "*.conf");
 
     secutiry_set_password("");
 

@@ -1,0 +1,30 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtCore",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtGui"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        },
+        {
+            "name": "my_conf",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}

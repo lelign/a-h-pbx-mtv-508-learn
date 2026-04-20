@@ -59,8 +59,8 @@ add_executable(pbx-mtv-508
         m26/mb86m26.cpp
         m26/mb86m26_control.cpp
         m26/mb86m26_lib.cpp
-        m26/mpeg-dump.cpp
-        HlsServer/hlsserver.cpp
+#        m26/mpeg-dump.cpp
+#        HlsServer/hlsserver.cpp
 	led/led_class.cpp
 	factory_defaults/factory_defaults.cpp
 	ip-utils/ip-utils.c

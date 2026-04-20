@@ -11,7 +11,7 @@
 #include "mtv-web/mtv_web.h"
 #include "hardware_diagnostics/hardware_diagnostics.h"
 #include "m26/mb86m26_control.h"
-#include "HlsServer/hlsserver.h"
+//#include "HlsServer/hlsserver.h"
 #include "factory_defaults/factory_defaults.h"
 #include "watchdog.h"
 #include "gpio/gpio.h"
@@ -26,7 +26,7 @@ class PbxMtv508 : public QObject
 {
     Q_OBJECT
 public:
-    HlsServer       *hlsserver;
+   //HlsServer       *hlsserver;
     explicit PbxMtv508(bool watchdog=0);
     ~PbxMtv508();
     Eventlog *eventlog;
