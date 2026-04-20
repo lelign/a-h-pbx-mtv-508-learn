@@ -2,6 +2,9 @@
 #include <QtWebSockets/qwebsocketserver.h>
 #include <QtWebSockets/qwebsocket.h>
 #include <QtCore/QDebug>
+#include <QLoggingCategory>
+
+static QLoggingCategory category("websocket server");
 
 QT_USE_NAMESPACE
 
@@ -98,7 +101,8 @@ QJsonParseError err;
         senddata(pClient, get_alive());
         return;
     }
-
+    
+    qDebug(category) << "\tCONFIGURE! => signal_web_message";
     emit signal_web_message(pClient, obj);
 }
 

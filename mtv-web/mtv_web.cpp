@@ -200,6 +200,7 @@ QJsonValue val;
         if(val.toString() == "set_config"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_config";
                 cmd_set_config(data_obj);
             }
             else{
@@ -209,6 +210,7 @@ QJsonValue val;
         if(val.toString() == "set_solo"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_solo";
                 cmd_set_solo(data_obj);
             }
             else{
@@ -218,6 +220,7 @@ QJsonValue val;
         if(val.toString() == "set_preset"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_preset";
                 cmd_set_preset(data_obj);
             }
             else{
@@ -227,6 +230,7 @@ QJsonValue val;
         if(val.toString() == "set_time"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_time";
                 cmd_set_time(data_obj);
             }
             else{
@@ -236,6 +240,7 @@ QJsonValue val;
         if(val.toString() == "access"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_access_word";
                 cmd_set_access_word(data_obj);
             }
             else{
@@ -246,11 +251,13 @@ QJsonValue val;
             system("reboot");
         }
         if(val.toString() == "get_layout_presets"){
+            qDebug(category) << "\tslot web message cmd_get_layout_presets";
             cmd_get_layout_presets(pClient);
         }
         if(val.toString() == "set_network_settings"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message set_network_settings";
                 cmd_set_network_settings(data_obj);
             }
             else{
@@ -260,6 +267,7 @@ QJsonValue val;
         if(val.toString() == "set_layout_presets"){
             if(obj.value("data").isObject()){
                 data_obj = obj.value("data").toObject();
+                qDebug(category) << "\tslot web message cmd_set_layout_presets";
                 cmd_set_layout_presets(data_obj);
             }
             else{
