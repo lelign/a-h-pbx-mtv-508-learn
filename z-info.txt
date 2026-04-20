@@ -8,3 +8,6 @@ cmake -DCMAKE_BUILD_TYPE=Debug ../Project_508_learn
 >
 cmake ../Project_508_learn
 make -j $(nproc)
+
+# ignore changes & back
+git stash / git stash pop
