@@ -2,12 +2,30 @@
 . /opt/poky/2.4.4/environment-setup-armv7ahf-neon-poky-linux-gnueabi
 
 # compile
-cd /media/ignat/537GB/anton_help/pbx-mtv-508-software-build
+cd /media/ignat/537GB/a_h/pbx-mtv-508-software-build
 <
-cmake -DCMAKE_BUILD_TYPE=Debug ../Project_508_learn
+cmake -DCMAKE_BUILD_TYPE=Debug ../pbx-mtv-508-software
 >
-cmake ../Project_508_learn
+cmake ../pbx-mtv-508-software
+>
 make -j $(nproc)
 
 # ignore changes & back
 git stash / git stash pop
+
+git log --oneline
+    cbebc54 (HEAD -> main, origin/main) ready to use
+    93737dc ready to use
+    dfefe65 bitstream off
+    f4af88e deleted libusb
+    6aedb1f turned  m26 off completely
+    d14d73c mb86m26_control set off
+    3e4bedf it's work
+    1f3dfd5 deleted hls-server
+    4f4666d now m26-eeprom not in build
+    d693a3d pbx-mtv-508.cpp check ok
+    d4b67be added dts
+    27a4638 first fix
+    7bbdc13 first commit
+
+git checkout 4f4666d
