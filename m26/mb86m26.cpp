@@ -334,7 +334,7 @@ void MB86M26::callback(libusb_context *ctx, libusb_device *device, libusb_hotplu
 void MB86M26::run()
 {
         struct timeval tv = {1 ,0};
-        int status;
+        /*        int status;
 
         mb_reset();
 
@@ -366,7 +366,7 @@ void MB86M26::run()
         );
         while(thread_exit_flag==0){
                 libusb_handle_events_timeout_completed(NULL, &tv, NULL);
-        }
+        }        */
 }
 
 void MB86M26::stop()
