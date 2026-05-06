@@ -20,13 +20,14 @@ void data_ready(uint8_t * data, int len, void * ctx)
 
 PbxMtv508::PbxMtv508(bool watchdog)
 {
-    qDebug() << "Program start";
+    qDebug(category) << "\t\t\tProgram start";
 
     this->watchdog = new Watchdog(watchdog);
 
     hdmi_adv7513 = new Hdmi_adv7513();
 
     mtvsystem = new PbxMtvSystem;
+    
     connect(mtvsystem->anc_reader, &AncReader::scte_104_data, this, &PbxMtv508::slot_scte_104_data);
     connect(mtvsystem->anc_reader, &AncReader::op47_data, this, &PbxMtv508::slot_op47_data);
     connect(mtvsystem->anc_reader, &AncReader::op42_data, this, &PbxMtv508::slot_op42_data);
@@ -68,6 +69,7 @@ PbxMtv508::PbxMtv508(bool watchdog)
     m26_control->set_gop(mb86m26_control::IBBP);
     m26_control->set_gop_mode(mb86m26_control::GOP_CLOSED);
     */
+    
     mtvsystem->set_dei(1);
 
     #if (BOARD_REV==0)
@@ -96,6 +98,7 @@ PbxMtv508::PbxMtv508(bool watchdog)
     connect(layout, &Layout::signal_common_alarm_changed,
                     mtv_snmp, &Mtv_snmp::slot_set_common_alarm);
 
+    qDebug(category) << "\t\ton start device_config";
     device_config();
 
     layout->draw_overlay();
@@ -179,11 +182,13 @@ void PbxMtv508::slot_reset_to_factory_settings()
 /*---------------------------------------------------------------------------*/
 void PbxMtv508::device_config()
 {
+    
     hdmi_adv7513->adv_7513_set_color(layout->hdmi_color);
     hdmi_adv7513->adv_7513_set_hdmi_format(Hdmi_adv7513::HDMI_HD);
 }
 void PbxMtv508::slot_web_reconfigure()
 {
+    qDebug(category) << "\033[35m" << "\t\t slot_web_reconfigure" << "\033[0m";
     device_config();
 }
 /*---------------------------------------------------------------------------*/
@@ -214,17 +219,21 @@ void PbxMtv508::send_cascade_log(int category, QString str)
 /*---------------------------------------------------------------------------*/
 void PbxMtv508::slot_scte_104_data(int channel, QByteArray data)
 {
+    qDebug(category) << "\033[35m" << "\t\tslot_scte_104_data" << channel << data.size() << "\033[0m";
+
     scte_104[channel]->slot_scte_104_message(data);
 }
 /*---------------------------------------------------------------------------*/
 void PbxMtv508::slot_op47_data(int channel, QByteArray data)
 {
+    qDebug(category) << "\033[35m" << "\t\t slot_op47_data channel" << channel  << data.size() << "\033[0m";
     Q_UNUSED(channel);
     teletext_decoder->add_data(data);
 }
 /*---------------------------------------------------------------------------*/
 void PbxMtv508::slot_op42_data(int channel, QByteArray data)
 {
+    qDebug(category) << "\033[35m" << "\t\t slot_op42_data channel" << channel  << data.size() << "\033[0m";
     Q_UNUSED(channel);
     teletext_decoder->add_data_op42(data);
 }

@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QTimer>
 #include <sys/time.h>
-#include "anc-reader.h"
+//#include "anc-reader.h"
 
 typedef struct {
         int id;
@@ -15,7 +15,7 @@ typedef struct {
         uint32_t height;
 } video_format_t;
 
-class PbxMtvSystem : public QObject
+class ReadMem : public QObject
 {
         Q_OBJECT
 public:
@@ -44,11 +44,14 @@ public:
         int get_motion(int index);
         void set_dei(int enable);
         void system_set_time(time_t time);
-        AncReader * anc_reader;
+        void reg_write(uint32_t block, uint32_t addr, uint32_t data);
+        void scaler_scaler_config(int index, int bypass, int width, int height, 
+                int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode);
+        void scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out);
         //IgnVgpiServer * ignvgpiserver;
 
-        PbxMtvSystem();
-        ~PbxMtvSystem();
+        ReadMem();
+        ~ReadMem();
 private:
         QTimer sdi_format_timer;
         QTimer sdi_format_notify_timer;
@@ -58,14 +61,14 @@ private:
         bool some_changed = true;
         uint32_t reg_mem;
         QTimer reconfigure_timer;
-        void reg_write(uint32_t block, uint32_t addr, uint32_t data);
+        //void reg_write(uint32_t block, uint32_t addr, uint32_t data);
         uint32_t reg_read(uint32_t block, uint32_t addr);
         void framebuffer_start(int index, int value);
         void framebuffer_reconfigure(int index, int width, int height);
         void mosaic_reconfigure(int index, int x, int y, int width, int height, int enable);
-        void scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out);
-        void scaler_scaler_config(int index, int bypass, int width, int height, 
-                int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode);
+        //void scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out);
+        //void scaler_scaler_config(int index, int bypass, int width, int height, 
+        //        int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode);
         void scaler_coeff(int index, uint32_t * coeff);
         void reconfigure();
         QRgb rgb_to_ycrcb(QRgb value);

@@ -108,3 +108,10 @@ add_executable(rgbyuv-test
 target_link_libraries(rgbyuv-test Qt5::Widgets)
 
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/rgbyuv-test DESTINATION bin)
+
+add_executable(read_mem
+        read_mem/read_mem.cpp
+)
+target_link_libraries(read_mem Qt5::Widgets Qt5::Core)
+
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/read_mem DESTINATION bin)

@@ -31,6 +31,7 @@ public:
     ~PbxMtv508();
     Eventlog *eventlog;
 
+
 public slots:
     void slot_reset_to_factory_settings();
     void slot_over_temperature(QString str);

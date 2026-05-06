@@ -1028,9 +1028,15 @@ QJsonObject data_obj;
     json    ["type"   ] = "configuration";
 
     data_obj["system"      ] = get_json_system();
+    
     data_obj["sdi_format"  ] = get_json_sdi_format();
     data_obj["diagnostics" ] = get_json_hardware_diagnostics();
     data_obj["rand_value"  ] = rand_value;
+
+    QJsonDocument doc(data_obj);
+    QString jsonString = doc.toJson();
+    writeToFile("/mnt/ramdisk/get_json_block_configuration", jsonString);
+    //qDebug(category) << "\n\t\tget_json_block_configuration()" << jsonString<< "\n";
 
     json["data"] = data_obj;
     QJsonDocument saveDoc(json);
@@ -1401,3 +1407,21 @@ void Mtv_web::parser_preset_name(QJsonArray preset_name_arr)
     }
 }
 /*---------------------------------------------------------------------------*/
+void  Mtv_web::writeToFile(const QString &fileName, const QString &content) {
+    // 1. Initialize the file object
+    QFile file(fileName);
+
+    // 2. Open the file in WriteOnly mode (and Text mode for line-ending handling)
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        // 3. Create a stream to the file
+        QTextStream stream(&file);
+
+        // 4. Write the string to the stream
+        stream << content;
+
+        // 5. Close the file (or let it close automatically via destructor)
+        file.close();
+    } else {
+        qDebug() << "Could not open file for writing:" << file.errorString();
+    }
+}

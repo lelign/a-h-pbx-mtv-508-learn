@@ -18,6 +18,8 @@
 #include "../tsl/tsl-server.h"
 #include "../remote_ctrl_preset/remote_ctrl_preset.h"
 #include "../version.h"
+#include <QList>
+
 
 class Mtv_web : public QObject
 {
@@ -137,6 +139,8 @@ private:
     void check_sdi_format_from_slave();
     void clear_sdi_format_str(int cascade_index);
     void update_preset();
+    void writeToFile(const QString &fileName, const QString &content);
+    
 };
 
 #endif // MTV_WEB_H

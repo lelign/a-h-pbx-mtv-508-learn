@@ -7,7 +7,7 @@
 #define SETTINGS_SDI_INPUT_FILE_NAME ("pbx-mtv-508_sdi_input")
 #define TCP_PORT 10110
 
-static QLoggingCategory category("Layout Class");
+static QLoggingCategory category("\033[32m Layout Class \033[0m");
 #define PEN_WIDTH 2
 #define SizeOfArray(a) (sizeof(a)/sizeof(*a))
 #define FONT_SDI_FORMAT_SIZE 14
@@ -30,6 +30,8 @@ static QLoggingCategory category("Layout Class");
 
 #define TALLY_RED_OFF_COLOR QColor(0x00, 0x00, 0x00)
 #define TALLY_GREEN_OFF_COLOR QColor(0x00, 0x00, 0x00)
+
+
 
 //Layout::Layout(PbxMtvSystem *mtvsystem,  mb86m26_control *m26_control, Gpio *gpio, Eventlog *eventlog) :
 //    mtvsystem(mtvsystem), m26_control(m26_control), gpio(gpio), eventlog(eventlog)
@@ -74,9 +76,14 @@ Layout::Layout(PbxMtvSystem *mtvsystem,  Gpio *gpio, Eventlog *eventlog) :
 
     gpio->set_mode(gpio_mode);
     preset_Layout_Read(layout_preset.index);
+    qDebug(category) << "\t\tpreset_Layout_Read" << layout_preset.name[0] << "\033[0m";
 
     sound_routing();
-    get_layout();
+    QImage my_image; //ign
+    //get_layout();
+    my_image = get_layout(); // ign
+    
+    qDebug(category) <<"\t\tget_layout returned my_image" << my_image.size();
 
     cascade_server = new Cascade_server(TCP_PORT);
     connect(cascade_server, &Cascade_server::signal_new_client,    this, &Layout::slot_master_connected);
@@ -1014,6 +1021,7 @@ QString Layout::get_preset_file_name(int preset_num)
 {
     QString file_name = LAYOUT_PRESET_FILE_NAME;
     file_name +="_" + QString::number(preset_num);
+    //qDebug(category) << "\t\tget_preset_file_name" << file_name;
 
     return file_name;
 }
@@ -1024,7 +1032,7 @@ const int y[] = { 0, 0, 0, 1, 1, 1, 2, 2};
 
     QString file_name = get_preset_file_name(preset_num);
 
-    QSettings settings(QSettings::SystemScope, file_name);
+    QSettings settings(QSettings::SystemScope, file_name); // settings init
 
     for(uint i = 0; i < SizeOfArray(layout_object); ++i){
         int k = i & 0x07;
@@ -1094,6 +1102,7 @@ const int y[] = { 0, 0, 0, 1, 1, 1, 2, 2};
         teletext_cell.enable  = settings.value("enable",         0).toInt();
         teletext_cell.page    = settings.value("page",         888).toInt();
     settings.endGroup();
+    //qDebug(category) << "\t\tpreset read done keys" << settings.allKeys().size(); 
 
 } // End "Layout_preset_Read"
 

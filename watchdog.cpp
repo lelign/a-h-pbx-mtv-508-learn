@@ -44,5 +44,6 @@ void Watchdog::watchdog_kick()
         char c[1]={0};
         if(watchdog_fh<0)
                 return;
+        //qDebug() << "watchdog_kick()";
         write(watchdog_fh, c, 1);
 }

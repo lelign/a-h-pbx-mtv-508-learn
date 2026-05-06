@@ -6,7 +6,7 @@
 #include <sys/ioctl.h>
 #include <string.h>
 #include <arm_neon.h>
-#include "mtv-system.h"
+#include "read_mem.h"
 #include "str-mem-dev.h"
 #include "scaler_coeff.h"
 #include <QFile>
@@ -310,35 +310,36 @@ cvo_settings_t cvo_1080p25 = {
         .height = 1080,
 };
 
-PbxMtvSystem::PbxMtvSystem()
+ReadMem::ReadMem()
 {
-        dei = 0; // dei <= deinterlasing 
+    buffer = (char*) malloc(video_size); // Выделить  6220800 байт памяти = 1920*1080*3 = 6220800 
+        /*dei = 0; // dei <= deinterlasing 
         reconfigure_timer.setSingleShot(true);
-        connect(&reconfigure_timer, &QTimer::timeout, this, &PbxMtvSystem::reconfigure_timeout);
+        connect(&reconfigure_timer, &QTimer::timeout, this, &ReadMem::reconfigure_timeout);
         // reconfigure_timer will be start at 100ms via set_dei()
-        buffer = (char*) malloc(video_size); // Выделить  6220800 байт памяти = 1920*1080*3 = 6220800 
-        connect(&sdi_format_timer, &QTimer::timeout, this, &PbxMtvSystem::sdi_format_timeout);
+        
+        connect(&sdi_format_timer, &QTimer::timeout, this, &ReadMem::sdi_format_timeout);
         sdi_format_timer.start(1000); // 100  <= check inputs status every 100msec
         memset(&image_config, 0, sizeof(image_config));
         sdi_format_notify_timer.setSingleShot(true);
-        connect(&sdi_format_notify_timer, &QTimer::timeout, this, &PbxMtvSystem::sdi_format_notify_timeout);
+        connect(&sdi_format_notify_timer, &QTimer::timeout, this, &ReadMem::sdi_format_notify_timeout);
         // sdi_format_notify_timer will be start at 500msec if inputs status changes
         set_audio_source(0);
         reconfigure(); /* REG_MOSAIC, REG_DEI, REG_HDMI_OUT, REG_SDI_CVO, REG_MOSAIC*/
-        anc_reader = new AncReader(ANCIN, this);
-        anc_reader->start(); // start as thread ts_reader
+        //anc_reader = new AncReader(ANCIN, this);
+        //anc_reader->start(); // start as thread ts_reader
         //ignvgpiserver = new IgnVgpiServer();
-        //ignvgpiserver->start();
+        //ignvgpiserver->start();*/
 }
 
-PbxMtvSystem::~PbxMtvSystem()
+ReadMem::~ReadMem()
 {
         free(buffer);
-        anc_reader->stop();
-        delete anc_reader;
+        //anc_reader->stop();
+        //delete anc_reader;
 }
 
-void PbxMtvSystem::framebuffer_start(int index, int value)
+void ReadMem::framebuffer_start(int index, int value)
 {
         uint32_t base;
         
@@ -376,7 +377,7 @@ void PbxMtvSystem::framebuffer_start(int index, int value)
                 reg_write(base, 0, 0);
 }
 
-void PbxMtvSystem::framebuffer_reconfigure(int index, int width, int height)
+void ReadMem::framebuffer_reconfigure(int index, int width, int height)
 {
         uint32_t base;
         
@@ -417,10 +418,10 @@ void PbxMtvSystem::framebuffer_reconfigure(int index, int width, int height)
         );
 }
 
-void PbxMtvSystem::mosaic_reconfigure(int index, int x, int y, int width, int height, int enable)
+void ReadMem::mosaic_reconfigure(int index, int x, int y, int width, int height, int enable)
 {
         uint32_t base;
-        //qDebug(category) << "\n\t\tmosaic_reconfigure" << index << x << y << width << height << enable << "\n";
+        
         base = REG_MOSAIC;
 
         reg_write(base, 16+index*2+0, 
@@ -434,12 +435,11 @@ void PbxMtvSystem::mosaic_reconfigure(int index, int x, int y, int width, int he
         );
 }
 
-void PbxMtvSystem::scaler_scaler_config(int index, int bypass, int width, int height, 
+void ReadMem::scaler_scaler_config(int index, int bypass, int width, int height, 
         int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode)
 {
         int base;
-        //qDebug(category) << "\n\t\tscaler_scaler_config" << index << bypass << width << height 
-        //                << out_width << out_height << deinterlace << unsharp_bypass << csc_mode << "\n";
+
         switch(index){
         default:
         case 0:
@@ -489,7 +489,7 @@ void PbxMtvSystem::scaler_scaler_config(int index, int bypass, int width, int he
         reg_write(base, 1, height - 1);
 }
 
-void PbxMtvSystem::scaler_coeff(int index, uint32_t * coeff)
+void ReadMem::scaler_coeff(int index, uint32_t * coeff)
 {
         int base;
         switch(index){
@@ -527,10 +527,8 @@ void PbxMtvSystem::scaler_coeff(int index, uint32_t * coeff)
         }
 }
 
-void PbxMtvSystem::scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out)
+void ReadMem::scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out)
 {
-        qDebug(category) << "\n\t\tscaler_reconfigure" << index << width_in << height_in
-                                                        << width_out << height_out << "\n";
         int bypass = 0;
         if((width_in == width_out)&&(height_in == height_out))
                 bypass = 1;
@@ -555,7 +553,7 @@ void PbxMtvSystem::scaler_reconfigure(int index, int width_in, int height_in, in
         }
 }
 
-void PbxMtvSystem::reg_write(uint32_t block, uint32_t addr, uint32_t data)
+void ReadMem::reg_write(uint32_t block, uint32_t addr, uint32_t data)
 {
         strmem_reg_data reg_data;
         int ret;
@@ -614,20 +612,19 @@ void PbxMtvSystem::reg_write(uint32_t block, uint32_t addr, uint32_t data)
 
 }
 
-void PbxMtvSystem::bars_configure(int index, int x, int x2, int y, int scale, int enable_1, int enable_2)
+void ReadMem::bars_configure(int index, int x, int x2, int y, int scale, int enable_1, int enable_2)
 {
         if(dei){
                 y = y*2;
                 scale = (scale + 1) * 2 - 1;
         }
-        
+
         /*        qDebug(category) << "\t\t bars_configure reg_write  " << index << x << x2 << y << scale << enable_1 << enable_2;
         qDebug(category) << "\t\t bars_configure reg_write 1" <<  QString::number(index*2+0, 2) << "\t\t"<< QString::number (0
                 |(x<<0)
                 |((y/2)<<11)
                 |((scale&0x0f)<<22)
                 |(enable_1<<26), 2);*/
-        //qDebug(category) << "\n\t\tbars_configure" << index << x << x2 << y << scale << enable_1 << enable_2 << "\n";
 
         reg_write(REG_BARS, index*2+0, 0
                 |(x<<0)
@@ -661,7 +658,7 @@ void PbxMtvSystem::bars_configure(int index, int x, int x2, int y, int scale, in
 }
 
 
-uint32_t PbxMtvSystem::reg_read(uint32_t block, uint32_t addr)
+uint32_t ReadMem::reg_read(uint32_t block, uint32_t addr)
 {
         strmem_reg_data reg_data;
         int ret;
@@ -701,17 +698,20 @@ uint32_t PbxMtvSystem::reg_read(uint32_t block, uint32_t addr)
         return reg_data.data;
 }
 
-QString PbxMtvSystem::get_build_id()
+QString ReadMem::get_build_id()
 {
         uint32_t reg;
         if(!reg_mem){
                 reg_mem = reg;
         }
         reg = reg_read(REG_BUILDID, 0);
-        if(reg_mem != reg ){
+        /*
+                if(reg_mem != reg ){
                 qDebug(category) << "get_build_id()" << reg << QString("%1%2%3").arg((reg>>16)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>8)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>0)&0xFF, 2, 10, QLatin1Char('0'));
                 reg_mem = reg;
         }
+        */
+
         /*
         Этот фрагмент кода преобразует 24-битное целое число (например, значение цвета RGB) в отформатированную строку, гарантируя, 
         что каждый 8-битный сегмент будет иметь длину не менее 2 цифр и будет дополнен ведущим нулем при необходимости
@@ -722,7 +722,7 @@ QString PbxMtvSystem::get_build_id()
         return QString("%1%2%3").arg((reg>>16)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>8)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>0)&0xFF, 2, 10, QLatin1Char('0'));
 }
 
-int PbxMtvSystem::limit_color(int value)
+int ReadMem::limit_color(int value)
 {
         if(value > 255)
                 value = 255;
@@ -731,7 +731,7 @@ int PbxMtvSystem::limit_color(int value)
         return value;
 }
 
-QRgb PbxMtvSystem::rgb_to_ycrcb(QRgb value)
+QRgb ReadMem::rgb_to_ycrcb(QRgb value)
 {
         QRgb ret;
 
@@ -767,7 +767,7 @@ QRgb PbxMtvSystem::rgb_to_ycrcb(QRgb value)
         return ret;
 }
 
-QImage * PbxMtvSystem::image_to_prpb(QImage * image)
+QImage * ReadMem::image_to_prpb(QImage * image)
 {
         QImage * ret = new QImage(image->width(), image->height(), QImage::Format_ARGB32);
         Q_CHECK_PTR(ret);
@@ -808,7 +808,7 @@ const int16_t uint8_crcb_b_data[] = {
         56, -9, 56, -9, 56, -9, 56, -9,
 };
 
-void PbxMtvSystem::convert_line(QImage * img, int y, int width, uint8_t * buffer)
+void ReadMem::convert_line(QImage * img, int y, int width, uint8_t * buffer)
 {
         const uint8_t * line = img->constScanLine(y);
 
@@ -832,12 +832,12 @@ void PbxMtvSystem::convert_line(QImage * img, int y, int width, uint8_t * buffer
         }
 }
 
-void PbxMtvSystem::draw_overlay(QImage * image)
+void ReadMem::draw_overlay(QImage * image)
 {
         draw_overlay(image, 0, 0);
 }
 
-void PbxMtvSystem::draw_overlay(QImage * image, int offset_x, int offset_y)
+void ReadMem::draw_overlay(QImage * image, int offset_x, int offset_y)
 {
         Q_ASSERT(image->width()+offset_x<=1920);
         Q_ASSERT(image->height()+offset_y<=1080);
@@ -866,7 +866,7 @@ void PbxMtvSystem::draw_overlay(QImage * image, int offset_x, int offset_y)
         }
 }
 
-void PbxMtvSystem::overlay_sync()
+void ReadMem::overlay_sync()
 {
         int f;
 
@@ -879,7 +879,7 @@ void PbxMtvSystem::overlay_sync()
         close(f);
 }
 
-void PbxMtvSystem::configure_image(int index, int width, int height, int x, int y, int enable)
+void ReadMem::configure_image(int index, int width, int height, int x, int y, int enable)
 {
         image_config[index].width = width;
         image_config[index].height = height / 2;
@@ -897,7 +897,7 @@ void PbxMtvSystem::configure_image(int index, int width, int height, int x, int 
         reconfigure_image(index);
 }
 
-void PbxMtvSystem::reconfigure_image(int index)
+void ReadMem::reconfigure_image(int index)
 {
                
         video_format_t * current_format = get_video_format(get_sdi_format(index));
@@ -930,7 +930,7 @@ void PbxMtvSystem::reconfigure_image(int index)
         framebuffer_start(index, enable);
 }
 
-void PbxMtvSystem::reconfigure()
+void ReadMem::reconfigure()
 {
         qDebug(category) << "\n\t\treconfigure()\n";
         mosaic_start(0, !dei);
@@ -940,7 +940,7 @@ void PbxMtvSystem::reconfigure()
         mosaic_start(1, !dei);
 }
 
-int PbxMtvSystem::read_sdi_format(int index)
+int ReadMem::read_sdi_format(int index)
 {
         uint32_t reg;
 
@@ -951,7 +951,7 @@ int PbxMtvSystem::read_sdi_format(int index)
         return reg;
 }
 
-void PbxMtvSystem::sdi_format_timeout()
+void ReadMem::sdi_format_timeout()
 {
 
     //qDebug(category) << "sdi_format_timeout () timer 1000";
@@ -977,18 +977,18 @@ void PbxMtvSystem::sdi_format_timeout()
                 }
 }
 
-void PbxMtvSystem::sdi_format_notify_timeout()
+void ReadMem::sdi_format_notify_timeout()
 {
         qDebug(category) << "\t\t sdi_format_notify_timeout emit signal_new_format()";
         emit signal_new_format();
 }
 
-int PbxMtvSystem::get_sdi_format(int index){
+int ReadMem::get_sdi_format(int index){
         
         return sdi_format[index];
 }
 
-QString PbxMtvSystem::get_sdi_format_str(int index)
+QString ReadMem::get_sdi_format_str(int index)
 {
         int format = get_sdi_format(index);
 
@@ -1017,7 +1017,7 @@ QString PbxMtvSystem::get_sdi_format_str(int index)
         return "";
 }
 
-int PbxMtvSystem::get_sdi_status(int index)
+int ReadMem::get_sdi_status(int index)
 {
         int format = get_sdi_format(index);
 
@@ -1037,7 +1037,7 @@ int PbxMtvSystem::get_sdi_status(int index)
         }
 }
 
-int PbxMtvSystem::get_sdi_hd(int index)
+int ReadMem::get_sdi_hd(int index)
 {
         if(get_sdi_format(index)==(FORMAT_SD|1))
                 return 0;
@@ -1045,7 +1045,7 @@ int PbxMtvSystem::get_sdi_hd(int index)
                 return 1;
 }
 
-video_format_t * PbxMtvSystem::get_video_format(int id)
+video_format_t * ReadMem::get_video_format(int id)
 {
         for(int i=0; ; i++){
                 if(video_format[i].id==id)
@@ -1055,7 +1055,7 @@ video_format_t * PbxMtvSystem::get_video_format(int id)
         }
 }
 
-void PbxMtvSystem::cvi_configure(int index, int down3g)
+void ReadMem::cvi_configure(int index, int down3g)
 {
         int base;
         switch(index){
@@ -1091,7 +1091,7 @@ void PbxMtvSystem::cvi_configure(int index, int down3g)
         );
 }
 
-void PbxMtvSystem::dei_configure(int enable)
+void ReadMem::dei_configure(int enable)
 {
         int value;
 
@@ -1110,7 +1110,7 @@ void PbxMtvSystem::dei_configure(int enable)
         );
 }
 
-void PbxMtvSystem::mosaic_start(int enable, int inrelaced)
+void ReadMem::mosaic_start(int enable, int inrelaced)
 {
         uint32_t i_reg = 0;
         i_reg = 0
@@ -1123,7 +1123,7 @@ void PbxMtvSystem::mosaic_start(int enable, int inrelaced)
         );
 }
 
-void PbxMtvSystem::cvo_reconfigure(int interlaced, int hdmi_sdi)
+void ReadMem::cvo_reconfigure(int interlaced, int hdmi_sdi)
 {
         int block;
         cvo_settings_t * std;
@@ -1157,7 +1157,7 @@ void PbxMtvSystem::cvo_reconfigure(int interlaced, int hdmi_sdi)
         reg_write(block, 15, 1);
 }
 
-void PbxMtvSystem::bars_mute()
+void ReadMem::bars_mute()
 {
         uint32_t reg = 0;
 
@@ -1173,7 +1173,7 @@ void PbxMtvSystem::bars_mute()
         reg_write(REG_BARS, 16, reg);
 }
 
-void PbxMtvSystem::set_audio_source(int index)
+void ReadMem::set_audio_source(int index)
 {
         uint32_t i_reg = 0;
         i_reg = index; 
@@ -1181,7 +1181,7 @@ void PbxMtvSystem::set_audio_source(int index)
         reg_write(REG_AUDIO_SELECTOR, 0, index);
 }
 
-int PbxMtvSystem::level_value_to_db(int value)
+int ReadMem::level_value_to_db(int value)
 {
         int i = 0;
         int ret = -100;
@@ -1196,7 +1196,7 @@ int PbxMtvSystem::level_value_to_db(int value)
         return ret;
 }
 
-QList<int> PbxMtvSystem::get_audio_level()
+QList<int> ReadMem::get_audio_level()
 {
         QList<int> ret;
         //qDebug(category) << "get_audio_level"; 
@@ -1217,7 +1217,7 @@ QList<int> PbxMtvSystem::get_audio_level()
         return ret;
 }
 
-int PbxMtvSystem::get_motion(int index)
+int ReadMem::get_motion(int index)
 {
         int base;
         switch(index){
@@ -1261,7 +1261,7 @@ int PbxMtvSystem::get_motion(int index)
 }
 
 
-void PbxMtvSystem::set_dei(int enable)
+void ReadMem::set_dei(int enable)
 {
         //qDebug(category) << "\n\t\t\t set_dei enable(" << enable << ")\n";
         if(enable!=dei)
@@ -1269,15 +1269,181 @@ void PbxMtvSystem::set_dei(int enable)
         dei = enable;
 }
 
-void PbxMtvSystem::reconfigure_timeout()
+void ReadMem::reconfigure_timeout()
 {
         qDebug(category) << "reconfigure_timeout()";
         reconfigure();
 }
 
-void PbxMtvSystem::system_set_time(time_t time)
+void ReadMem::system_set_time(time_t time)
 {
         const struct timeval tv = {time, 0};
         settimeofday(&tv, 0);
         system("/etc/init.d/hwclock.sh restart");
+}
+
+int main() {
+    try {
+
+        static QLoggingCategory category("\033[35m read_mem\033[0m");
+        
+//static constexpr size_t REG_SPAN = 0x80;
+        /*        QTextStream qin(stdin);
+        QTextStream qout(stdout);
+        qout << "Enter REG: ";
+        qout.flush();
+        QString line = qin.readLine();
+        bool ok = false;
+        
+        if(reglist.contains(line)){
+            ok = true;
+            qDebug(category) << "reglist.contains" << line;
+        }*/
+        
+        /*        
+        uintptr_t REG_BASE; // = 0xFF202780;
+        REG_BASE = static_cast<uintptr_t>(line.toULongLong(&ok, 0)); // >> REG_BASE;
+
+        if (ok) {
+            qDebug(category) << "line" << line << REG_BASE;
+        // Success: 'address' contains the value
+        } else {
+        // Handling error: Conversion failed
+        }*/
+        
+        // here stop
+        ReadMem read_mem;
+        uint32_t base;
+        /*
+        REG_MOSAIC
+        index << x << y << width << height << enable
+        0 640 180 640 180 1 
+        1 0 0 640 180 0 
+        2 0 360 640 180 1 
+        3 0 0 640 180 0 
+        4 0 0 640 180 0 
+        5 0 0 640 180 0 
+        6 0 0 640 180 0 
+        7 1280 360 640 180 1 
+        */
+
+        /*
+        ok with mosaic
+        base = REG_MOSAIC;
+        int index = 0;
+        int x = 320; // 640
+        int y = 180;
+        int width = 640;
+        int height = 180;
+        int enable = 1;
+
+
+        read_mem.reg_write(base, 16+index*2+0, 
+                ((width+x) << 0)
+                |((height+y) << 11)
+        );
+        read_mem.reg_write(base, 16+index*2+1, 
+                ((x) << 0)
+                |((y) << 11)
+                |((enable)<<22)
+        );
+        */
+        
+        
+        /*        // REG_BARS OK
+        // bars_configure 0 647 1248 387 4 1 1
+        //              int index, int x, int x2, int y, int scale, int enable_1, int enable_2
+
+        int index = 0;
+        int x = 647; // 640
+        int x2 = 1248;
+        int y = 387;
+        int scale = 4;
+        int enable_1 = 1;
+        int enable_2 = 1;
+        read_mem.reg_write(REG_BARS, index*2+0, 0
+                |(x<<0)
+                |((y/2)<<11)
+                |((scale&0x0f)<<22)
+                |(enable_1<<26)
+        );
+
+        read_mem.reg_write(REG_BARS, index*2+1, 0
+                |(x2<<0)
+                |((y/2)<<11)
+                |((scale&0x0f)<<22)
+                |(enable_2<<26)
+        );
+        */
+
+
+        // REG_SCALER_0
+        // int index, int bypass, int width, int height, 
+        // int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode
+        // 0 0 1920 540 1280 360 0 0 0
+        base = REG_SCALER_0;
+        /*        int index = 0;
+        int bypass = 0;
+        int width = 1920;
+        int height = 540;
+        int out_width = 1280;
+        int out_height = 360;
+        int deinterlace = 0;
+        int unsharp_bypass = 0;
+        int csc_mode = 0;
+        read_mem.scaler_scaler_config( index,  bypass,  width,  height, 
+         out_width,  out_height,  deinterlace,  unsharp_bypass,  csc_mode);*/
+
+        // scaler_reconfigure 7 1920 540 640 180
+        // scaler_reconfigure 0 1920 540 1280 360
+        // scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out)
+        int index = 0; 
+        int width_in = 1920;
+        int height_in = 540;
+        int width_out = 1280;
+        int height_out = 360;
+
+        read_mem.scaler_reconfigure(index, width_in, height_in, width_out, height_out);
+            
+
+        /*uint32_t out_line_inc = (height-6-1)*4096/(out_height);
+        uint32_t out_pixel_inc = (width-8-1)*4096/(out_width);
+
+        reg_write(base, 2, out_width  - 1);
+        reg_write(base, 3, out_height);
+        reg_write(base, 4, out_line_inc);
+        reg_write(base, 5, out_pixel_inc);
+        // enable
+        reg_write(base, 6, 0
+                |(unsharp_bypass<<0)
+                |(bypass<<1)
+                |(csc_mode<<2)
+                |(deinterlace<<4)                
+        );
+        reg_write(base, 0, width - 1);
+        reg_write(base, 1, height - 1);
+
+        for(unsigned int i=0; i<32; i++){
+            reg_write(base, 10, coeff[i*3+0]);
+            reg_write(base, 11, coeff[i*3+1]);
+            reg_write(base, 12, coeff[i*3+2]);
+        }*/
+
+        // Читаем значение
+        //uint32_t data = fpga.read(REG_BASE);
+
+
+        //qDebug(category) << "1 Read value: 0x" << std::hex << data;
+        //qDebug(category) << "2 Read value: 0x" << data << QString::number(data,2);
+
+        // Записываем значение
+        // fpga.write(0x1);
+        
+    } catch (const std::exception& e) {
+        //std::cerr << "Error: " << e.what() << std::endl;
+        // std::tera << "Error: " << e.what() << std::endl;
+        qDebug() <<  "Error: " << e.what();
+        return 1;
+    }
+    return 0;
 }

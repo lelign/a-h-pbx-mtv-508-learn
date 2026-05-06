@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <QLoggingCategory>
 
 #define QUEUE_SIZE (256)
 #define BUF_SIZE (16*1024)
+
+static QLoggingCategory category("\033[32m ts-in-reader\033[0m");
 
 void TsInReader::run()
 {

@@ -6,7 +6,10 @@
                 "${workspaceFolder}/**",
                 "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtCore",
                 "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include",
-                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtGui"
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtGui",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtWidgets",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtNetwork",
+                "/media/ignat/old_ubuntu/home/ubuntu/Qt5.10.0/5.10.0/gcc_64/include/QtSvg"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
