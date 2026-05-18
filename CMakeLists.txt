@@ -115,3 +115,10 @@ add_executable(read_mem
 target_link_libraries(read_mem Qt5::Widgets Qt5::Core)
 
 INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/read_mem DESTINATION bin)
+
+add_executable(devmem
+        devmem/devmem2.c
+)
+
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/devmem DESTINATION bin)
+

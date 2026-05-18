@@ -49,7 +49,7 @@ public:
                 int out_width, int out_height, int deinterlace, int unsharp_bypass, int csc_mode);
         void scaler_reconfigure(int index, int width_in, int height_in, int width_out, int height_out);
         //IgnVgpiServer * ignvgpiserver;
-
+        uint32_t reg_read(uint32_t block, uint32_t addr);
         ReadMem();
         ~ReadMem();
 private:
@@ -62,7 +62,7 @@ private:
         uint32_t reg_mem;
         QTimer reconfigure_timer;
         //void reg_write(uint32_t block, uint32_t addr, uint32_t data);
-        uint32_t reg_read(uint32_t block, uint32_t addr);
+        
         void framebuffer_start(int index, int value);
         void framebuffer_reconfigure(int index, int width, int height);
         void mosaic_reconfigure(int index, int x, int y, int width, int height, int enable);

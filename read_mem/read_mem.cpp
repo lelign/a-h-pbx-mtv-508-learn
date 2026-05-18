@@ -1403,8 +1403,19 @@ int main() {
         int width_out = 1280;
         int height_out = 360;
 
-        read_mem.scaler_reconfigure(index, width_in, height_in, width_out, height_out);
-            
+        //read_mem.scaler_reconfigure(index, width_in, height_in, width_out, height_out);
+        uint32_t reg = read_mem.reg_read(REG_BUILDID, 0);
+        qDebug(category) << reglist[REG_BUILDID] << "Value:" << reg;
+        for(int i = 0; i < 8; i++){
+                // Fixed: Added address offset 'i' to the second parameter
+                reg = read_mem.reg_read(REG_SDI_ADAPTER, i); 
+                
+                // Formatted output using Qt's streams
+                qDebug(category) << reglist[REG_SDI_ADAPTER] 
+                                      << "Offset:" << i 
+                                      << "Value:" << reg;
+        }
+        //read_mem.reg_write(REG_BUILDID, 0);
 
         /*uint32_t out_line_inc = (height-6-1)*4096/(out_height);
         uint32_t out_pixel_inc = (width-8-1)*4096/(out_width);

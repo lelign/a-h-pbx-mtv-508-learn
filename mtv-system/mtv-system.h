@@ -57,6 +57,7 @@ private:
         int dei;
         bool some_changed = true;
         uint32_t reg_mem;
+        QList <uint32_t>  list_read_sdi_format;
         QTimer reconfigure_timer;
         void reg_write(uint32_t block, uint32_t addr, uint32_t data);
         uint32_t reg_read(uint32_t block, uint32_t addr);

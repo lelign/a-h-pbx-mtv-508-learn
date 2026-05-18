@@ -704,10 +704,13 @@ uint32_t PbxMtvSystem::reg_read(uint32_t block, uint32_t addr)
 QString PbxMtvSystem::get_build_id()
 {
         uint32_t reg;
+
+        reg = reg_read(REG_BUILDID, 0);
+        
         if(!reg_mem){
                 reg_mem = reg;
         }
-        reg = reg_read(REG_BUILDID, 0);
+
         if(reg_mem != reg ){
                 qDebug(category) << "get_build_id()" << reg << QString("%1%2%3").arg((reg>>16)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>8)&0xFF, 2, 10, QLatin1Char('0')).arg((reg>>0)&0xFF, 2, 10, QLatin1Char('0'));
                 reg_mem = reg;
@@ -945,7 +948,14 @@ int PbxMtvSystem::read_sdi_format(int index)
         uint32_t reg;
 
         reg = reg_read(REG_SDI_ADAPTER, index);
-        //qDebug(category) << "read_sdi_format() reg:" << reg << "index" << index;
+
+        if(!list_read_sdi_format.contains(reg)){
+                list_read_sdi_format.append(reg);
+                qDebug(category) << "read_sdi_format()" << reg << "index" << index;
+        }
+        
+       
+
         if((reg&0x0f) == 0x0f)
                 reg = 0x0f;
         return reg;
